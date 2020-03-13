@@ -8,9 +8,11 @@ import SessionController from './app/controllers/SessionController';
 const routes = new Router();
 
 // Não precisam de autenticação
-routes.post('/users', UserController.store);
+routes.get('/users', UserController.index);
+routes.get('/users/:id', UserController.show);
 
 routes.post('/sessions', SessionController.store);
+routes.post('/users', UserController.store);
 
 routes.use(authMiddleware);
 

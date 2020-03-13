@@ -2,8 +2,18 @@ import * as Yup from 'yup';
 import User from '../models/User';
 
 class UserController {
+  async index(req, res) {
+    const users = await User.findAll();
+    return res.json(users);
+  }
+
+  async show(req, res) {
+    const user = await User.findOne({ id: req.header.id });
+    return res.json(user);
+  }
+
   async store(req, res) {
-    const schema = Yup.object.shape({
+    const schema = Yup.object().shape({
       name: Yup.string().required(),
       email: Yup.string()
         .email()
@@ -35,7 +45,7 @@ class UserController {
   }
 
   async update(req, res) {
-    const schema = Yup.object.shape({
+    const schema = Yup.object().shape({
       name: Yup.string(),
       email: Yup.string().email(),
       oldPassword: Yup.string().min(6),
