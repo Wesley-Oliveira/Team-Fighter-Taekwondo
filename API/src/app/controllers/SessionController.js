@@ -20,7 +20,7 @@ class SessionController {
 
     const { id, name } = user;
 
-    /* Para enviar as informações no header
+    /* Para enviar as informações no header, investigar para adicionar mais informações no header
         const token = jwt.sign({ id }, authConfig.secret, {
             expiresIn: authConfig.expiresIn,
         });
