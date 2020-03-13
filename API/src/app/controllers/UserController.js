@@ -3,6 +3,7 @@ import User from '../models/User';
 
 class UserController {
   async index(req, res) {
+    // Adicionar paginação
     // Para pegar todos que existirem
     const users = await User.findAll();
 
@@ -21,6 +22,10 @@ class UserController {
     // Para pegar o valor passado na rota e pesquisar por ele -- Após a rota com /:id -- abc/teste/3
     const userId = req.params.id;
     const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(200).json({ message: 'No existing users' });
+    }
 
     return res.json(user);
   }
@@ -78,6 +83,8 @@ class UserController {
 
     const { email, oldPassword } = req.body;
 
+    // mudar aqui para req.params.id e adicionar em routes, caso queira liberar para um usuário att o outro
+    // Esse req.userId possui o valor do usuário que efetivou o login, o id está dentor do payload do token
     const user = await User.findByPk(req.userId);
 
     if (email !== user.email) {
@@ -101,6 +108,25 @@ class UserController {
       name,
       email,
     });
+  }
+
+  async delete(req, res) {
+    const userId = req.params.id;
+    const user = await User.findByPk(userId);
+
+    // Usuário precisa existir para ser deletado
+    if (!user) {
+      return res.status(400).json({ error: 'User does not exist.' });
+    }
+
+    // Não pode se excluir
+    if (user.id === req.userId) {
+      return res.status(401).json({ error: 'Unauthorized request.' });
+    }
+
+    await user.destroy();
+
+    return res.send();
   }
 }
 
