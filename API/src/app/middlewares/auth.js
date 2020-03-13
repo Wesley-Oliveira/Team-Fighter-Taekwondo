@@ -4,6 +4,7 @@ import authConfig from '../../config/auth';
 
 export default async (req, res, next) => {
   const authHeader = req.headers.authorization;
+  // Ver formas de adicionar os outros headers aqui no middleware
 
   if (!authHeader) {
     return res.status(401).json({ error: 'Token does not exist.' });
