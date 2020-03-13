@@ -3,12 +3,25 @@ import User from '../models/User';
 
 class UserController {
   async index(req, res) {
+    // Para pegar todos que existirem
     const users = await User.findAll();
+
     return res.json(users);
   }
 
   async show(req, res) {
-    const user = await User.findOne({ id: req.header.id });
+    // Para pegar o valor passado no header -- testeheader = a variavel passada no header
+    // const head = req.headers.testeheader;
+    // console.log(head);
+
+    // Para pegar o valor passado por uma url query -- após a rota exemplo?teste=1
+    // const que = req.query;
+    // console.log(que);
+
+    // Para pegar o valor passado na rota e pesquisar por ele -- Após a rota com /:id -- abc/teste/3
+    const userId = req.params.id;
+    const user = await User.findByPk(userId);
+
     return res.json(user);
   }
 
