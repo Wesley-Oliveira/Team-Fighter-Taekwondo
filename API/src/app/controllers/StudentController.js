@@ -10,25 +10,25 @@ class StudentController {
     return res.json(students);
   }
 
-  // async show(req, res) {
-  //   // Para pegar o valor passado no header -- testeheader = a variavel passada no header
-  //   // const head = req.headers.testeheader;
-  //   // console.log(head);
+  async show(req, res) {
+    // Para pegar o valor passado no header -- testeheader = a variavel passada no header
+    // const head = req.headers.testeheader;
+    // console.log(head);
 
-  //   // Para pegar o valor passado por uma url query -- após a rota exemplo?teste=1
-  //   // const que = req.query;
-  //   // console.log(que);
+    // Para pegar o valor passado por uma url query -- após a rota exemplo?teste=1
+    // const que = req.query;
+    // console.log(que);
 
-  //   // Para pegar o valor passado na rota e pesquisar por ele -- Após a rota com /:id -- abc/teste/3
-  //   const userId = req.params.id;
-  //   const user = await User.findByPk(userId);
+    // Para pegar o valor passado na rota e pesquisar por ele -- Após a rota com /:id -- abc/teste/3
+    const student_id = req.params.id;
+    const student = await Student.findByPk(student_id);
 
-  //   if (!user) {
-  //     return res.status(200).json({ message: 'No existing users' });
-  //   }
+    if (!student) {
+      return res.status(200).json({ message: 'No existing users' });
+    }
 
-  //   return res.json(user);
-  // }
+    return res.json(student);
+  }
 
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -43,75 +43,45 @@ class StudentController {
 
     const student = await Student.create(req.body);
 
-    return res.json({ student });
+    return res.json(student);
   }
 
-  // async update(req, res) {
-  //   const schema = Yup.object().shape({
-  //     name: Yup.string(),
-  //     email: Yup.string().email(),
-  //     oldPassword: Yup.string().min(6),
-  //     password: Yup.string()
-  //       .min(6)
-  //       .when('oldPassword', (oldPassword, field) =>
-  //         oldPassword ? field.required() : field
-  //       ),
-  //     confirmPassword: Yup.string().when('password', (password, field) =>
-  //       password ? field.required().oneOf([Yup.ref('password')]) : field
-  //     ),
-  //   });
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      observacao: Yup.string().required(),
+      gub: Yup.string().required(),
+    });
 
-  //   if (!(await schema.isValid(req.body))) {
-  //     return res.status(400).json({ error: 'Validation failed.' });
-  //   }
+    if (!(await schema.isValid(req.body))) {
+      return res.status(400).json({ error: 'Validation failed.' });
+    }
 
-  //   const { email, oldPassword } = req.body;
+    const student_id = req.params.id;
+    const student = await Student.findByPk(student_id);
 
-  //   // mudar aqui para req.params.id e adicionar em routes, caso queira liberar para um usuário att o outro
-  //   // Esse req.userId possui o valor do usuário que efetivou o login, o id está dentor do payload do token
-  //   const user = await User.findByPk(req.userId);
+    if (!student) {
+      return res.status(400).json({ error: 'Student does not exist.' });
+    }
 
-  //   if (email !== user.email) {
-  //     const userExists = await User.findOne({
-  //       where: { email },
-  //     });
+    const newStudent = await student.update(req.body);
 
-  //     if (userExists) {
-  //       return res.status(400).json({ error: 'User already exists.' });
-  //     }
-  //   }
+    return res.json(newStudent);
+  }
 
-  //   if (oldPassword && !(await user.checkPassword(oldPassword))) {
-  //     return res.status(401).json({ error: 'Wrong password.' });
-  //   }
+  async delete(req, res) {
+    const student_id = req.params.id;
+    const student = await Student.findByPk(student_id);
 
-  //   const { id, name } = await user.update(req.body);
+    // Usuário precisa existir para ser deletado
+    if (!student) {
+      return res.status(400).json({ error: 'Student does not exist.' });
+    }
 
-  //   return res.json({
-  //     id,
-  //     name,
-  //     email,
-  //   });
-  // }
+    await student.destroy();
 
-  // async delete(req, res) {
-  //   const userId = req.params.id;
-  //   const user = await User.findByPk(userId);
-
-  //   // Usuário precisa existir para ser deletado
-  //   if (!user) {
-  //     return res.status(400).json({ error: 'User does not exist.' });
-  //   }
-
-  //   // Não pode se excluir
-  //   if (user.id === req.userId) {
-  //     return res.status(401).json({ error: 'Unauthorized request.' });
-  //   }
-
-  //   await user.destroy();
-
-  //   return res.send();
-  // }
+    return res.send();
+  }
 }
 
 export default new StudentController();

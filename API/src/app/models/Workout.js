@@ -19,7 +19,7 @@ class Workout extends Model {
     this.belongsToMany(models.Student, {
       through: 'studentsworkouts',
       foreignKey: 'workout_id',
-      as: 'workout',
+      as: 'students',
     });
   }
 }
