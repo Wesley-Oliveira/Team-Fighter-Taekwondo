@@ -6,6 +6,7 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import StudentController from './app/controllers/StudentController';
 import WorkoutController from './app/controllers/WorkoutController';
+import StudentsWorkoutsController from './app/controllers/StudentsWorkoutsController';
 
 const routes = new Router();
 
@@ -22,6 +23,16 @@ routes.get('/workouts/:id', WorkoutController.show);
 routes.post('/workouts', WorkoutController.store);
 routes.put('/workouts/:id', WorkoutController.update);
 routes.delete('/workouts/:id', WorkoutController.delete);
+
+routes.get(
+  '/workout/:workout_id/student/:student_id',
+  StudentsWorkoutsController.show
+);
+routes.post('/workout/student', StudentsWorkoutsController.store);
+routes.delete(
+  '/workout/:workout_id/student/:student_id',
+  StudentsWorkoutsController.delete
+);
 
 routes.post('/sessions', SessionController.store);
 

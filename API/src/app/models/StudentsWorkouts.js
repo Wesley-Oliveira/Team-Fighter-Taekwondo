@@ -9,6 +9,7 @@ class StudentWorkout extends Model {
       },
       {
         sequelize,
+        tableName: 'studentsworkouts',
       }
     );
     return this;
