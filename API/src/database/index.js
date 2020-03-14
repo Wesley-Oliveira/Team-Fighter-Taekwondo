@@ -3,9 +3,10 @@ import databaseConfig from '../config/database';
 
 import User from '../app/models/User';
 import Student from '../app/models/Student';
+import Workout from '../app/models/Workout';
 
 // Variável para receber todos os models
-const models = [User, Student];
+const models = [User, Student, Workout];
 
 class Database {
   constructor() {

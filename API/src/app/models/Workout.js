@@ -5,7 +5,6 @@ class Workout extends Model {
     super.init(
       {
         tipo: Sequelize.STRING,
-        data: Sequelize.DATE,
         avaliacao: Sequelize.STRING,
       },
       {
