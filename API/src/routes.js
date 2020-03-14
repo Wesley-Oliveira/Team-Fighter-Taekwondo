@@ -4,10 +4,14 @@ import authMiddleware from './app/middlewares/auth';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
+import StudentController from './app/controllers/StudentController';
 
 const routes = new Router();
 
 // Não precisam de autenticação
+
+routes.get('/students', StudentController.index);
+routes.post('/students', StudentController.store);
 
 routes.post('/sessions', SessionController.store);
 
