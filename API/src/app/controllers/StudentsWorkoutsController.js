@@ -103,6 +103,9 @@ class WorkoutController {
 
     return res.send();
   }
+
+  // mostrar todos os alunos (id e nome) que participaram da aula x e um contador do total de alunos;
+  // mostrar todas as aulas (id, tipo) que o aluno x participou e um contador do total de aulas;
 }
 
 export default new WorkoutController();
