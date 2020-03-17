@@ -5,7 +5,11 @@ class UserController {
   async index(req, res) {
     // Adicionar paginação
     // Para pegar todos que existirem
-    const users = await User.findAll();
+    const { page = 1 } = req.query;
+    const users = await User.findAll({
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
 
     return res.json(users);
   }
@@ -62,6 +66,7 @@ class UserController {
     });
   }
 
+  // corrigir o update de usuário
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),

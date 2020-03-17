@@ -5,7 +5,11 @@ class StudentController {
   async index(req, res) {
     // Adicionar paginação
     // Para pegar todos que existirem
-    const students = await Student.findAll();
+    const { page = 1 } = req.query;
+    const students = await Student.findAll({
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
 
     return res.json(students);
   }

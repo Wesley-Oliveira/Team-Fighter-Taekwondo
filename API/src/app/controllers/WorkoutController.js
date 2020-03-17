@@ -5,7 +5,11 @@ class WorkoutController {
   async index(req, res) {
     // Adicionar paginação
     // Para pegar todos que existirem
-    const workouts = await Workout.findAll();
+    const { page = 1 } = req.query;
+    const workouts = await Workout.findAll({
+      limit: 20,
+      offset: (page - 1) * 20,
+    });
 
     return res.json(workouts);
   }

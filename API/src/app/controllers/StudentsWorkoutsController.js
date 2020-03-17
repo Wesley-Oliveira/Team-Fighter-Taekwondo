@@ -44,6 +44,7 @@ class WorkoutController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
+      student_id: yup.array().of(yup.number().min(2)),
       student_id: Yup.number()
         .required()
         .integer(),

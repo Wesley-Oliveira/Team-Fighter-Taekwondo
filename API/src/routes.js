@@ -12,6 +12,10 @@ const routes = new Router();
 
 // Não precisam de autenticação
 
+routes.post('/sessions', SessionController.store);
+
+routes.use(authMiddleware);
+
 routes.get('/students', StudentController.index);
 routes.get('/students/:id', StudentController.show);
 routes.post('/students', StudentController.store);
@@ -33,10 +37,6 @@ routes.delete(
   '/workout/:workout_id/student/:student_id',
   StudentsWorkoutsController.delete
 );
-
-routes.post('/sessions', SessionController.store);
-
-routes.use(authMiddleware);
 
 // Precisam de autenticação
 routes.get('/users', UserController.index);
