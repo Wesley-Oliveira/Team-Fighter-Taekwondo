@@ -16,8 +16,8 @@ class Workout extends Model {
 
   static associate(models) {
     this.belongsToMany(models.Student, {
-      through: 'studentsworkouts',
       foreignKey: 'workout_id',
+      through: 'studentsworkouts',
       as: 'students',
     });
   }

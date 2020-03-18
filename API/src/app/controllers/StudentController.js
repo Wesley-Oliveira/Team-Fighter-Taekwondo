@@ -3,8 +3,6 @@ import Student from '../models/Student';
 
 class StudentController {
   async index(req, res) {
-    // Adicionar paginação
-    // Para pegar todos que existirem
     const { page = 1 } = req.query;
     const students = await Student.findAll({
       limit: 20,

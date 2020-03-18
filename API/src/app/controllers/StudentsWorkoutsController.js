@@ -1,112 +1,100 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
+
 import * as Yup from 'yup';
 import Workout from '../models/Workout';
 import Student from '../models/Student';
-import StudentWorkout from '../models/StudentsWorkouts';
 
-class WorkoutController {
-  async show(req, res) {
-    // Para pegar o valor passado no header -- testeheader = a variavel passada no header
-    // const head = req.headers.testeheader;
-    // console.log(head);
-
-    // Para pegar o valor passado por uma url query -- após a rota exemplo?teste=1
-    // const que = req.query;
-    // console.log(que);
-
-    // Para pegar o valor passado na rota e pesquisar por ele -- Após a rota com /:id -- abc/teste/3
-    const { workout_id } = req.params;
-    const workout = await Workout.findByPk(workout_id);
-
-    if (!workout) {
-      return res.status(200).json({ message: 'No existing Workout.' });
-    }
-
+class StudentsWorkoutController {
+  async showStudent(req, res) {
     const { student_id } = req.params;
-    const student = await Student.findByPk(student_id);
 
-    if (!student) {
-      return res.status(200).json({ message: 'No existing Student.' });
-    }
-
-    const studentworkoutExist = await StudentWorkout.findOne({
-      where: { workout_id, student_id },
+    // Aqui tenho todas as aulas de um aluno
+    const student = await Student.findByPk(student_id, {
+      include: {
+        model: Workout,
+        attributes: ['id', 'tipo', 'avaliacao'], // Selecionando os valores que eu quero que me retorne
+        association: 'workouts',
+        through: { attributes: [] }, // não deve retornar nada da tabela intermediária
+      },
     });
 
-    if (!studentworkoutExist) {
-      return res.status(400).json({
-        message: 'Bad Request: workout_id or student_id invalid',
-      });
+    if (!student) {
+      return res.status(400).json({ error: 'Student not found' });
     }
 
-    return res.json({ workout, student });
+    return res.json(student.workouts);
+  }
+
+  async showWorkout(req, res) {
+    const { workout_id } = req.params;
+
+    // Aqui tenho todos os alunos de um treino
+    const workout = await Workout.findByPk(workout_id, {
+      include: {
+        model: Student,
+        attributes: ['id', 'name', 'gub', 'observacao'], // Selecionando os valores que eu quero que me retorne
+        association: 'students',
+        through: { attributes: [] }, // não deve retornar nada da tabela intermediária
+      },
+    });
+
+    if (!workout) {
+      return res.status(400).json({ error: 'Student not found' });
+    }
+
+    return res.json(workout.students);
   }
 
   async store(req, res) {
-    const schema = Yup.object().shape({
-      student_id: yup.array().of(yup.number().min(2)),
-      student_id: Yup.number()
-        .required()
-        .integer(),
-      workout_id: Yup.number()
-        .required()
-        .integer(),
-    });
+    const schema = Yup.array()
+      .of(
+        Yup.object().shape({
+          student_id: Yup.number().integer(),
+          workout_id: Yup.number().integer(),
+        })
+      )
+      .required();
 
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Validation failed.' });
     }
 
-    const { student_id } = req.body;
-    const student = await Student.findByPk(student_id);
+    const array = req.body;
 
-    const { workout_id } = req.body;
-    const workout = await Workout.findByPk(workout_id);
+    // Validações e inserção
+    for (let i = 0; i < array.length; i++) {
+      const student = await Student.findByPk(array[i].student_id);
+      if (!student) {
+        return res.status(400).json({ message: 'No existing Student.' });
+      }
 
-    if (!workout) {
-      return res.status(400).json({ message: 'No existing Workout.' });
+      const workout = await Workout.findByPk(array[i].workout_id);
+      if (!workout) {
+        return res.status(400).json({ message: 'No existing Workout.' });
+      }
+
+      await student.addWorkout(workout);
     }
 
-    if (!student) {
-      return res.status(400).json({ message: 'No existing Student.' });
-    }
-
-    const studentworkoutExist = await StudentWorkout.findOne({
-      where: { workout_id, student_id },
-    });
-
-    if (studentworkoutExist) {
-      return res.status(400).json({
-        message: 'The student is already registered in the workout',
-      });
-    }
-
-    const studentworkout = await StudentWorkout.create(req.body);
-
-    return res.json(studentworkout);
+    return res.json('array');
   }
 
   async delete(req, res) {
-    const { workout_id } = req.params;
-    const { student_id } = req.params;
-
-    const studentworkoutExist = await StudentWorkout.findOne({
-      where: { workout_id, student_id },
-    });
-
-    if (!studentworkoutExist) {
-      return res.status(400).json({
-        message: 'Bad Request: workout_id or student_id invalid',
-      });
+    const { student_id, workout_id } = req.params;
+    const student = await Student.findByPk(student_id);
+    if (!student) {
+      return res.status(400).json({ error: 'Student not found' });
     }
 
-    await studentworkoutExist.destroy();
+    const workout = await Workout.findOne({
+      where: { id: workout_id },
+    });
+
+    await student.removeWorkout(workout);
 
     return res.send();
   }
-
-  // mostrar todos os alunos (id e nome) que participaram da aula x e um contador do total de alunos;
-  // mostrar todas as aulas (id, tipo) que o aluno x participou e um contador do total de aulas;
 }
 
-export default new WorkoutController();
+export default new StudentsWorkoutController();

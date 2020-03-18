@@ -66,7 +66,7 @@ class UserController {
     });
   }
 
-  // corrigir o update de usuário
+  // Atualização de usuário só pode ser feita por ele mesmo
   async update(req, res) {
     const schema = Yup.object().shape({
       name: Yup.string(),
