@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-// import authMiddleware from './app/middlewares/auth';
+import authMiddleware from './app/middlewares/auth';
 
 import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
@@ -13,7 +13,7 @@ const routes = new Router();
 routes.post('/sessions', SessionController.store);
 
 // Não precisam de autenticação
-// routes.use(authMiddleware);
+routes.use(authMiddleware);
 // Precisam de autenticação
 
 // CRUD Students
