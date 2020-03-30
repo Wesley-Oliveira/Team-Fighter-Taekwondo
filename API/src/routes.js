@@ -10,6 +10,7 @@ import StudentsWorkoutsController from './app/controllers/StudentsWorkoutsContro
 
 const routes = new Router();
 
+routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
 
 // Não precisam de autenticação
@@ -33,7 +34,6 @@ routes.delete('/workouts/:id', WorkoutController.delete);
 // CRUD Users
 routes.get('/users', UserController.index);
 routes.get('/users/:id', UserController.show);
-routes.post('/users', UserController.store);
 routes.put('/users', UserController.update);
 routes.delete('/users/:id', UserController.delete);
 
